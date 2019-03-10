@@ -3,6 +3,9 @@ import os
 import cgi
 import tkinter.messagebox as tm
 from scrapy.shell import inspect_response
+from mesAndPaths import * as mp
+
+
 # this can check the response of the pider at any time with: inspect_response(response, self)
 import re
 
@@ -11,7 +14,7 @@ class CollegeSpider(scrapy.Spider):
 
     name = 'college_spider'
     urlToCrawl = ''
-    start_urls = ['https://moodle.kinneret.ac.il']
+    start_urls = [mp.URL_MOODLE_TO_CRAWL]
     #start_urls = [urlToCrawl]
 
 
@@ -28,46 +31,42 @@ class CollegeSpider(scrapy.Spider):
 
 
     def after_login(self, response):
+        
+
         #inspect_response(response, self)
-        if not '/my' in response.url:
-            tm.showwarning("Error","Invalid username or password. Try again.")
+        if not mp.CHECK_IF_LOGIN_STR in response.url:
+            tm.showwarning("Error",mp.INVALID_USERNAME_PASS_MESS)
         else:
-            
-            user_name = response.xpath('//div/header/div/div/h1/text()').extract()
-            myFilesDir = "הקורסים של:  {0}".format(user_name).encode('utf8')
-            cursos_first = response.css('div.well')
+            myFilesDir = "{0} - COURSES".format(user_name).encode('utf8')
+            user_name = response.xpath(mp.USER_NAME_PATH).extract()
+            cursos_first = response.css(mp.COURSE_CONTAINER_PATH)
             myFilesDirUser = os.path.join(os.path.expanduser("~"), myFilesDir.decode('utf8'))
             if not os.path.exists(myFilesDirUser):
                 os.makedirs(myFilesDirUser)
-            print("Hello MR.ROBOT {0}".format(user_name))
 
             for my_course in cursos_first.css('a'):
             # inspect_response(response, self)
-                if "\n" not in my_course.css('a::text').extract_first():
-                    my_course_dir = os.path.join(myFilesDirUser, my_course.css('a::text').extract_first())
+                if mp.BLANK_SPACE_ON_HTML not in my_course.css(mp.A_ATTR_HTML).extract_first():
+                    my_course_dir = os.path.join(myFilesDirUser, my_course.css(mp.A_ATTR_HTML).extract_first())
                     print(my_course_dir)
                     if not os.path.exists(my_course_dir):
                         os.makedirs(my_course_dir)
-                    yield response.follow(my_course.css('a::attr(href)').extract_first(), callback=self.parse_files, meta={'file_dir':my_course_dir})
-                    print("DID NOT YIELD")
+                    yield response.follow(my_course.css(mp.HREF_ATTR_HTML).extract_first(), callback=self.parse_files, meta={'file_dir':my_course_dir})
         
 
 
     def parse_files(self, response):
-        topics = response.css('ul.topics')
-        sections = topics.css('li.section')
+        topics = response.css(mp.CS_PATH_HTML_TOPICS)
+        sections = topics.css(mp.CS_PATH_HTML_SECTION)
         folder_name = response.meta['file_dir']
 
-        for link_s in sections.css('a::attr(href)').extract():
-            print(">>>>>>>>>>>>>>>>>>>>>>>>FOROPEN>>>>>>>>>>>>>>>>>>>>>>>>>")
-            if re.match('https:\/\/moodle\.kinneret\.ac\.il\/mod\/resource\/view\.php\?id\=.*', link_s):
+        for link_s in sections.css(mp.HREF_ATTR_HTML).extract():
+            if re.match(sp.REG_EXP_TAKE_ONLY_IDNUMBER, link_s):
                 file_lname = os.path.join(folder_name, sections.css('span::text').extract_first())
                 yield response.follow(link_s, callback=self.download_link, meta={'file_com_name':folder_name})
-            print("<<<<<<<<<<<<<<<<<<<<<<<<<FOR CLOSED<<<<<<<<<<<<<<<<<<<<<<<<")
 
 #2
     def download_link(self, response):
-        print("ANTES DEL IF:>>>")
         check_cont_file = response.headers.getlist('Content-Type')
         check_cont_file3 = response.headers.getlist('Content-Disposition')
         check_cont_file2 = check_cont_file[0].decode("utf-8")
@@ -76,31 +75,11 @@ class CollegeSpider(scrapy.Spider):
         folder_name2 = response.meta['file_com_name']
         file_name_saved3 = os.path.join(folder_name2, params.get('filename'))
         print(file_name_saved3)
-        if not "application" in check_cont_file2:
-            print("NOT A FILE{0}".format(check_cont_file2))
+        if not mp.A_REAL_FILE in check_cont_file2:
+            print("NOT A FILE{0}".format(check_cont_file2)) #Debugging
             print(check_cont_file2)
         else:
             with open(file_name_saved3, 'wb') as out_file:
                 out_file.write(response.body)
-            print("Item: {0} was saved".format(file_name_saved3))
-
-
-#1
-    """
-    
-#response.xpath('//div/header/div/div/h1/text()').extract() name_student
-#-----------------------------------------------------Cursos
-#fase1 = response.css('div.well')      >>>>>>>>>Cursos
-#fase1.css('a::text').extract()     >>>>>> nombres de cursos.
-#fase1.css('a::attr(href)').extract() >>> links cursos
-#-----------------------------------------------------Cursos
-#topics = response.css('ul.topics')
-#sections = topics.css('li.section')
-#sections.css('a::text').extract_first() nombres topics
-#sections.css('span::text').extract() >> nombres archivos curso
-#sections.css('a::attr(href)').extract() >> link to files course
-
-
-
-"""
+            print("Item: {0} was saved".format(file_name_saved3))#Debugging
 
