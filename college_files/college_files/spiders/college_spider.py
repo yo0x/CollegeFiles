@@ -3,8 +3,7 @@ import os
 import cgi
 import tkinter.messagebox as tm
 from scrapy.shell import inspect_response
-from mesAndPaths import * as mp
-
+from . import mesAndPaths as mp
 
 # this can check the response of the pider at any time with: inspect_response(response, self)
 import re
@@ -37,8 +36,8 @@ class CollegeSpider(scrapy.Spider):
         if not mp.CHECK_IF_LOGIN_STR in response.url:
             tm.showwarning("Error",mp.INVALID_USERNAME_PASS_MESS)
         else:
-            myFilesDir = "{0} - COURSES".format(user_name).encode('utf8')
             user_name = response.xpath(mp.USER_NAME_PATH).extract()
+            myFilesDir = "{0} - COURSES".format(user_name).encode('utf8')
             cursos_first = response.css(mp.COURSE_CONTAINER_PATH)
             myFilesDirUser = os.path.join(os.path.expanduser("~"), myFilesDir.decode('utf8'))
             if not os.path.exists(myFilesDirUser):
@@ -61,7 +60,7 @@ class CollegeSpider(scrapy.Spider):
         folder_name = response.meta['file_dir']
 
         for link_s in sections.css(mp.HREF_ATTR_HTML).extract():
-            if re.match(sp.REG_EXP_TAKE_ONLY_IDNUMBER, link_s):
+            if re.match(mp.REG_EXP_TAKE_ONLY_IDNUMBER, link_s):
                 file_lname = os.path.join(folder_name, sections.css('span::text').extract_first())
                 yield response.follow(link_s, callback=self.download_link, meta={'file_com_name':folder_name})
 
