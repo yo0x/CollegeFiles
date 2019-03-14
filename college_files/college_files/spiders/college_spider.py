@@ -70,3 +70,4 @@ class CollegeSpider(scrapy.Spider):
                 out_file.write(response.body)
             print("Item: {0} was saved".format(file_name_saved3))#Debugging
 
+

@@ -13,8 +13,6 @@ from college_files.spiders import mesAndPaths as mp
 from tkinter.ttk import Progressbar
 import time
 import threading
-#from scrapy.crawler import CrawlerRunner
-#from twisted.internet import reactor
 
 
 class LoginFrame(Frame):
@@ -71,17 +69,13 @@ class LoginFrame(Frame):
         self.progress.grid(row=1,column=0,sticky=W)
         self.progress.start()
         self.process = CrawlerProcess({'USER_AGENT': 'Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0', 'Accept-Language': 'he,en-US;q=0.7,en;q=0.3'})
+        #process.crawl(CollegeSpider, urlToCrawl=self.myUrlChoise, user_id=self.entry_username.get(), password_u=self.entry_password.get())
         self.process.crawl(CollegeSpider,start_urls=[self.passed_moodle_url], user_id=self.entry_username.get(), password_u=self.entry_password.get())
         self.process.start()
         self.progress.stop()
         self.progress.grid_forget()
         self.btnDownload['state']='normal'
         tm.showinfo(title="GREAT!", message=mp.FILES_DOWNLOADED_MSG)
-        #self.btnDownload['state']='disabled'
-
-        
-       
-        
         #self.btnDownload['state']='disabled'
     
     def _login_btn_clicked(self):
@@ -110,33 +104,3 @@ root.geometry("500x190")
 root.title(mp.WINDOWS_TITILE)
 lf = LoginFrame(root)
 root.mainloop()
-
-'''
-def my_spider(self):
-        self.progress.grid(row=1,column=0,sticky=W)
-        self.progress.start()
-        self.process = CrawlerProcess({'USER_AGENT': 'Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0', 'Accept-Language': 'he,en-US;q=0.7,en;q=0.3'})
-        #process.crawl(CollegeSpider, urlToCrawl=self.myUrlChoise, user_id=self.entry_username.get(), password_u=self.entry_password.get())
-        self.process.crawl(CollegeSpider,start_urls=[self.passed_moodle_url], user_id=self.entry_username.get(), password_u=self.entry_password.get())
-        self.process.start()
-        self.progress.stop()
-        self.progress.grid_forget()
-        self.btnDownload['state']='normal'
-        tm.showinfo(title="GREAT!", message=mp.FILES_DOWNLOADED_MSG)
-        #self.btnDownload['state']='disabled'
-
-
-def my_spider(self):
-        self.progress.grid(row=1,column=0,sticky=W)
-        self.progress.start()
-        self.runner = CrawlerRunner()
-        d = self.runner.crawl(CollegeSpider,start_urls=[self.passed_moodle_url], user_id=self.entry_username.get(), password_u=self.entry_password.get())
-        d.addBoth(lambda _: reactor.stop())
-        reactor.run()
-        self.progress.stop()
-        self.progress.grid_forget()
-        self.btnDownload['state']='normal'
-        tm.showinfo(title="GREAT!", message=mp.FILES_DOWNLOADED_MSG)
-        
-
-'''
