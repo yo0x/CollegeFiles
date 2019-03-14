@@ -32,13 +32,10 @@ class LoginFrame(Frame):
         self.label_msg.grid(row=0,column=0, sticky=W)
         self.entry_username = Entry(self)
         self.entry_password = Entry(self, show="*")
-        # on change dropdown value
         self.label_username.grid(row=1, sticky=E)
         self.label_password.grid(row=3, sticky=E)
         self.entry_username.grid(row=1, column=1)
         self.entry_password.grid(row=3, column=1)
-        #self.checkbox = Checkbutton(self, text="Keep me logged in")
-        #self.checkbox.grid(columnspan=3)
         self.btnDownload = Button(self, text="<<Download my files>>", command=self._login_btn_clicked)
         self.btnDownload.grid(row=6, column=0, sticky=S)
         self.brnClose = Button(self, text="Close", command=root.destroy)
@@ -52,11 +49,12 @@ class LoginFrame(Frame):
         self.entry_custom_url = Entry(self, textvariable=self.df_url)
         self.entry_custom_url.grid(row=5, column=1,sticky=S)
         self.entry_custom_url['state'] = 'disable'
+        self.progress = Progressbar(self, orient=HORIZONTAL,length=50,  mode='indeterminate')
+        self.progress.grid(row=7,column=1,sticky=W)
+
 
         self.pack()
-        #staus bar
-        self.progress = Progressbar(self, orient=HORIZONTAL,length=300,  mode='indeterminate')
-        #status bar end
+
 
     def _radio_Button_Option(self):
         if self.var.get()==0:
@@ -68,7 +66,6 @@ class LoginFrame(Frame):
 
 
     def my_spider(self):
-        self.progress.grid(row=1,column=0,sticky=W)
         self.progress.start()
         self.process = CrawlerProcess({'USER_AGENT': 'Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0', 'Accept-Language': 'he,en-US;q=0.7,en;q=0.3'})
         self.process.crawl(CollegeSpider,start_urls=[self.passed_moodle_url], user_id=self.entry_username.get(), password_u=self.entry_password.get())
@@ -106,7 +103,7 @@ class LoginFrame(Frame):
 
 
 root = Tk()
-root.geometry("500x190")
+root.geometry("500x200")
 root.title(mp.WINDOWS_TITILE)
 lf = LoginFrame(root)
 root.mainloop()
