@@ -4,37 +4,27 @@ import cgi
 import tkinter.messagebox as tm
 from scrapy.shell import inspect_response
 from . import mesAndPaths as mp
-
-# this can check the response of the pider at any time with: inspect_response(response, self)
+# inspect_response(response, self) >>>> For debbuging.
 import re
 
 
 class CollegeSpider(scrapy.Spider):
-
     name = 'college_spider'
-    urlToCrawl = ''
-    start_urls = [mp.URL_MOODLE_TO_CRAWL]
-    #start_urls = [urlToCrawl]
-
-
-
+    
     def parse(self, response):
-
         return scrapy.FormRequest.from_response(
                 response,
                 formdata={'username': self.user_id, 'password': self.password_u},
 
                 callback=self.after_login
-
         )
 
 
     def after_login(self, response):
-        
-
         #inspect_response(response, self)
         if not mp.CHECK_IF_LOGIN_STR in response.url:
             tm.showwarning("Error",mp.INVALID_USERNAME_PASS_MESS)
+            raise SystemExit
         else:
             user_name = response.xpath(mp.USER_NAME_PATH).extract()
             myFilesDir = "{0} - COURSES".format(user_name).encode('utf8')
@@ -42,7 +32,6 @@ class CollegeSpider(scrapy.Spider):
             myFilesDirUser = os.path.join(os.path.expanduser("~"), myFilesDir.decode('utf8'))
             if not os.path.exists(myFilesDirUser):
                 os.makedirs(myFilesDirUser)
-
             for my_course in cursos_first.css('a'):
             # inspect_response(response, self)
                 if mp.BLANK_SPACE_ON_HTML not in my_course.css(mp.A_ATTR_HTML).extract_first():
@@ -58,7 +47,6 @@ class CollegeSpider(scrapy.Spider):
         topics = response.css(mp.CS_PATH_HTML_TOPICS)
         sections = topics.css(mp.CS_PATH_HTML_SECTION)
         folder_name = response.meta['file_dir']
-
         for link_s in sections.css(mp.HREF_ATTR_HTML).extract():
             if re.match(mp.REG_EXP_TAKE_ONLY_IDNUMBER, link_s):
                 file_lname = os.path.join(folder_name, sections.css('span::text').extract_first())
