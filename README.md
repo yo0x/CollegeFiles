@@ -14,7 +14,7 @@ Check your python version and make sure it matches 3.6.X:
 
     $ python -V
 
-Install all the requirements with pip:
+Install all the requirements with [PIP](https://www.liquidweb.com/kb/install-pip-windows/):
 
     $ pip install -r requirements.txt
 
