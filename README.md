@@ -1,7 +1,6 @@
 # [CollegeFiles](http://yonor.me/coollegefiles)
 
-CollegeFiles is a simple python app which downloads all the course's files from a [MOODLE](https://moodle.org/) site and nicely organize them in their respective folder. CollegeFiles is built upon [Scrapy Framework](https://scrapy.org/), *"An open source and collaborative framework for extracting the data you need from websites."*
-It's prety handy, as a student or lecturer, to keep an offline/update copy of your Courses with you all the time.
+CollegeFiles is a simple python app which downloads all the course's files from a [MOODLE](https://moodle.org/) site and nicely organize them in their respective folder. CollegeFiles is built upon [Scrapy Framework](https://scrapy.org/), *"An open source and collaborative framework for extracting the data you need from websites."*. It's prety handy, as a student or lecturer, to keep an offline/update copy of your Courses with you all the time.
 
 Code available on [github](https://github.com/yo0x/CollegeFiles)
 
