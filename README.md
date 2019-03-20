@@ -20,6 +20,7 @@ Install all the requirements with pip:
 
 ## Use
 Run the CollegeFilesDownloader.py script:
+
  $ python CollegeFilesDownloader.py
 
 ![College ScreenShot](https://i.postimg.cc/KzV0HwYj/Screenshot-20190320-095406.png)
