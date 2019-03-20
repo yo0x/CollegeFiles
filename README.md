@@ -9,11 +9,17 @@ Code available on [github](https://github.com/yo0x/CollegeFiles)
 
 ## Installation
 CollegeFiles works only with [Pyhton3.6.x](https://www.python.org/downloads/release/python-365/).
+
+Check your python version and make sure it matches 3.6.X:
+    $ python -V
+
 Install all the requirements with pip:
 
     $ pip install -r requirements.txt
 
 ## Use
+Run the CollegeFilesDownloader.py script:
+ $ python CollegeFilesDownloader.py
 
 ![College ScreenShot](https://i.postimg.cc/KzV0HwYj/Screenshot-20190320-095406.png)
 
